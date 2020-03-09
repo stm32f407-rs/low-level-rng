@@ -37,7 +37,9 @@ fn reset_rng(rcc: &stm32f407::RCC) {
 }
 
 fn set_pll(rcc: &stm32f407::RCC) {
+    // set pll as microcontroller output 2
     rcc.cfgr.modify(|_, w| w.mco2().pll());
+    // enable pll
     rcc.cr.modify(|_, w| w .pllon().set_bit());
 
     while !rcc.cr.read().pllrdy().is_ready() {
@@ -62,6 +64,7 @@ fn main() -> ! {
     reset_rng(&rcc);
 
     let rng = peripherals.RNG;
+    // at the beginning data is not ready
     assert_eq!(false, rng.sr.read().drdy().bits());
 
     // enable random number generation
